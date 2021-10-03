@@ -1,7 +1,7 @@
 import 'package:first_flutter_project/base/navigation/AppRouteInformationParser.dart';
 import 'package:first_flutter_project/base/navigation/AppRouterDelegate.dart';
 import 'package:flutter/material.dart';
-import 'domain/entities.dart';
+import 'base/domain/entities.dart';
 
 void main() {
   runApp(MyApp());

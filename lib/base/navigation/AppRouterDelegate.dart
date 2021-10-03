@@ -2,6 +2,7 @@ import 'package:first_flutter_project/base/domain/entities.dart';
 import 'package:first_flutter_project/base/navigation/routes.dart';
 import 'package:first_flutter_project/base/screens/home.dart';
 import 'package:first_flutter_project/base/screens/zero.dart';
+import 'package:first_flutter_project/chattask/screen/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -31,9 +32,10 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
         MaterialPage(
             key: ValueKey('Home'),
             child: HomePage(tasks: tasks, onTaskSelected: _handleTaskTapped)),
-        if (_selectedTask != null)
-          if (_selectedTask!.taskNumber == 0)
-            MaterialPage(key: ValueKey('Zero'), child: ZeroScreen())
+        if (_selectedTask != null && _selectedTask!.taskNumber == 0)
+          MaterialPage(key: ValueKey('Zero'), child: ZeroScreen()),
+        if (_selectedTask != null && _selectedTask!.taskNumber == 1)
+          MaterialPage(key: ValueKey('Chat'), child: ChatScreen()),
       ],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
