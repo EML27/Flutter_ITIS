@@ -8,7 +8,7 @@ class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
 
   @override
-  State createState() => ChatScreenState();
+  ChatScreenState createState() => ChatScreenState();
 }
 
 class ChatScreenState extends State<ChatScreen> {
@@ -52,18 +52,18 @@ class ChatScreenState extends State<ChatScreen> {
           title: Text("Сообщения"),
         ),
         body: SafeArea(
-            child: Center(
-                child: Padding(
-          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
               Divider(),
               Expanded(
-                  child: ListView(
-                      reverse: true,
-                      children: dataSrc.map((msg) {
-                        return ListTile(title: Text(msg.text));
-                      }).toList())),
+                  child: ListView.builder(
+                itemCount: dataSrc.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(dataSrc[index].text),
+                  );
+                },
+              )),
               Divider(),
               if (partnerIsTyping) Text("Собеседник печатает..."),
               Row(children: [
@@ -76,7 +76,7 @@ class ChatScreenState extends State<ChatScreen> {
               ]),
             ],
           ),
-        ))));
+        ));
   }
 
   @override
