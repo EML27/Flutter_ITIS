@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:bubble/bubble.dart';
 import 'package:first_flutter_project/chattask/domain/entities.dart';
+import 'package:first_flutter_project/chattask/views/MessageBubble.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -25,18 +27,25 @@ class ChatScreenState extends State<ChatScreen> {
   }
 
   void imitatePartnerMessage() async {
-    await Future.delayed(const Duration(seconds: 1), () {});
     String answer = partnerAnswers[Random().nextInt(partnerAnswers.length - 1)];
-    partnerIsTyping = true;
+    await Future.delayed(const Duration(seconds: 1), () {});
+    setState(() {
+      partnerIsTyping = true;
+    });
     await Future.delayed(const Duration(seconds: 2), () {});
-    partnerIsTyping = false;
-    addMessage(answer, false);
+    setState(() {
+      partnerIsTyping = false;
+      addMessage(answer, false);
+    });
   }
 
   void handleSend() {
-    String text = _controller.text;
-    addMessage(text, true);
-    imitatePartnerMessage();
+    setState(() {
+      String text = _controller.text;
+      _controller.text = "";
+      addMessage(text, true);
+      imitatePartnerMessage();
+    });
   }
 
   @override
@@ -52,30 +61,39 @@ class ChatScreenState extends State<ChatScreen> {
           title: Text("Сообщения"),
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Divider(),
-              Expanded(
-                  child: ListView.builder(
-                itemCount: dataSrc.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(dataSrc[index].text),
-                  );
-                },
+          child: Padding(
+              padding: EdgeInsets.all(8),
+              child: Column(
+                children: [
+                  Expanded(
+                      child: ListView.builder(
+                    itemCount: dataSrc.length,
+                    itemBuilder: (context, index) {
+                      return MessageBubble(dataSrc[index]);
+                    },
+                  )),
+                  if (partnerIsTyping)
+                    Bubble(
+                      child: Text("Собеседник печатает..."),
+                    ),
+                  Divider(),
+                  Row(children: [
+                    Expanded(
+                        child: TextField(
+                      controller: _controller,
+                      decoration: InputDecoration(hintText: "Сообщение..."),
+                      onChanged: (text) {
+                        setState(() {});
+                      },
+                    )),
+                    if (_controller.text != "")
+                      Wrap(children: [
+                        IconButton(
+                            onPressed: handleSend, icon: Icon(Icons.send))
+                      ]),
+                  ]),
+                ],
               )),
-              Divider(),
-              if (partnerIsTyping) Text("Собеседник печатает..."),
-              Row(children: [
-                TextField(
-                  controller: _controller,
-                  decoration: InputDecoration(hintText: "Напишите что-нибудь"),
-                ),
-                if (_controller.text != "")
-                  IconButton(onPressed: handleSend, icon: Icon(Icons.send)),
-              ]),
-            ],
-          ),
         ));
   }
 
