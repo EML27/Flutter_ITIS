@@ -4,19 +4,25 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
-  Message msg;
+  final Message msg;
+  final String curUser;
 
-  MessageBubble(this.msg);
+  MessageBubble(this.msg, this.curUser);
 
   @override
   Widget build(BuildContext context) {
     return Bubble(
-      child: Text(
-        msg.text,
-        textAlign: msg.isAuthorUser ? TextAlign.right : TextAlign.left,
-      ),
-      color: msg.isAuthorUser ? Colors.lightBlueAccent : Colors.lightGreenAccent,
-      alignment: msg.isAuthorUser ? Alignment.topRight : Alignment.topLeft,
+      child: Column(children: [
+        Text(msg.author),
+        Text(
+          msg.message,
+          textAlign: msg.author == curUser ? TextAlign.right : TextAlign.left,
+        )
+      ]),
+      color: msg.author == curUser
+          ? Colors.lightBlueAccent
+          : Colors.lightGreenAccent,
+      alignment: msg.author == curUser ? Alignment.topRight : Alignment.topLeft,
       margin: BubbleEdges.all(8),
     );
   }

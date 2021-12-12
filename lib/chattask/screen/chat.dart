@@ -1,10 +1,12 @@
-import 'dart:math';
-
 import 'package:bubble/bubble.dart';
 import 'package:first_flutter_project/chattask/domain/entities.dart';
 import 'package:first_flutter_project/chattask/views/MessageBubble.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:first_flutter_project/mobx/chat_data.dart';
+
+final messageStorage = MessageStateManager();
+final currentUserName = "EML";
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -16,41 +18,20 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   late TextEditingController _controller;
 
-  List<Message> dataSrc = [
-    Message("Привет!", false),
-  ];
   bool partnerIsTyping = false;
-
-  void addMessage(String text, bool userAuthor) {
-    Message msg = Message(text, userAuthor);
-    dataSrc.add(msg);
-  }
-
-  void imitatePartnerMessage() async {
-    String answer = partnerAnswers[Random().nextInt(partnerAnswers.length - 1)];
-    await Future.delayed(const Duration(seconds: 1), () {});
-    setState(() {
-      partnerIsTyping = true;
-    });
-    await Future.delayed(const Duration(seconds: 2), () {});
-    setState(() {
-      partnerIsTyping = false;
-      addMessage(answer, false);
-    });
-  }
 
   void handleSend() {
     setState(() {
       String text = _controller.text;
       _controller.text = "";
-      addMessage(text, true);
-      imitatePartnerMessage();
+      messageStorage.sendMessage(Message(currentUserName, text));
     });
   }
 
   @override
   void initState() {
     _controller = TextEditingController();
+    messageStorage.loadData();
     super.initState();
   }
 
@@ -65,13 +46,7 @@ class ChatScreenState extends State<ChatScreen> {
               padding: EdgeInsets.all(8),
               child: Column(
                 children: [
-                  Expanded(
-                      child: ListView.builder(
-                    itemCount: dataSrc.length,
-                    itemBuilder: (context, index) {
-                      return MessageBubble(dataSrc[index]);
-                    },
-                  )),
+                  MessagesWidget(),
                   if (partnerIsTyping)
                     Bubble(
                       child: Text("Собеседник печатает..."),
@@ -101,6 +76,22 @@ class ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+}
+
+class MessagesWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Observer(
+        builder: (_) => Expanded(
+                child: ListView.builder(
+              itemCount: messageStorage.data.length,
+              itemBuilder: (context, index) {
+                return MessageBubble(
+                    messageStorage.data.reversed.toList()[index], currentUserName);
+              },
+              reverse: true,
+            )));
   }
 }
 

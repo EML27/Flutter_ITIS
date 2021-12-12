@@ -42,7 +42,6 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
           return false;
         }
 
-        // Update the list of pages by setting _selectedBook to null
         _selectedTask = null;
         notifyListeners();
 
