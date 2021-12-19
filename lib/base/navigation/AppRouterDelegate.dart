@@ -3,6 +3,7 @@ import 'package:first_flutter_project/base/navigation/routes.dart';
 import 'package:first_flutter_project/base/screens/home.dart';
 import 'package:first_flutter_project/base/screens/zero.dart';
 import 'package:first_flutter_project/chattask/screen/chat.dart';
+import 'package:first_flutter_project/gallerytask/screens/gallery_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -16,6 +17,7 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
   List<Task> tasks = [
     Task("Нулевое задание", 0),
     Task("Первое задание. Чат", 1),
+    Task("Галерея", 2),
   ];
 
   @override
@@ -36,6 +38,8 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
           MaterialPage(key: ValueKey('Zero'), child: ZeroScreen()),
         if (_selectedTask != null && _selectedTask!.taskNumber == 1)
           MaterialPage(key: ValueKey('Chat'), child: ChatScreen()),
+        if (_selectedTask != null && _selectedTask!.taskNumber == 2)
+          MaterialPage(key: ValueKey('Gallery'), child: GalleryScreen()),
       ],
       onPopPage: (route, result) {
         if (!route.didPop(result)) {
@@ -65,6 +69,8 @@ class AppRouterDelegate extends RouterDelegate<AppRoutePath>
         return AppRoutePath.zero();
       case 1:
         return AppRoutePath.chat();
+      case 2:
+        return AppRoutePath.gallery();
     }
     return AppRoutePath.home();
   }
